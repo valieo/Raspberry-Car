@@ -1,0 +1,158 @@
+<!-- index.html -->
+<!-- 树莓派小车控制面板 -->>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspberry Car Control Panel</title>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <style type="text/css">
+        #front {
+            margin-left: 55px;
+            margin-bottom: 3px;
+        }
+        #rear{
+            margin-top: 3px;
+            margin-left: 55px;
+        }
+        .btn{
+             background: #62559f;
+            }
+    </style>
+    <script>
+
+        $(function(){
+            $("button").mousedown(function(){
+                console.log(this.id + "mouse down");
+                $.post("/cmd",this.id,function(data,status){});
+            });
+            // 鼠标弹起则停止移动
+            $("button").mouseup(function(){
+                console.log(this.id + "mouse up");
+                $.post("/cmd","stop",function(data,status){});
+            })
+
+
+            // 键盘控制小车移动
+            $(document).keydown(function(event){
+                switch(event.keyCode){
+                    case 87://w
+                        console.log("press W");
+                        $.post("/cmd","forward",function(data,status){});
+                        break;
+                    case 83://s
+                        console.log("press S");
+                        $.post("/cmd","backward",function(data,status){});
+                        break;
+                    case 65://a
+                        console.log("press A");
+                        $.post("/cmd","turnLeft",function(data,status){});
+                        break;
+                    case 68://d
+                        console.log("press D");
+                        $.post("/cmd","turnRight",function(data,status){});
+                        break;
+                    case 81://q
+                        console.log("press Q");
+                        $.post("/cmd","speedUp",function(data,status){});
+                        break;
+                    case 69://e
+                        console.log("press E");
+                        $.post("/cmd","slowDown",function(data,status){});
+                        break;
+                    case 90://z
+                        console.log("press Z");
+                        $.post("/cmd","leftFineTuning",function(data,status){});
+                        break;
+                    case 67://c
+                        console.log("press C");
+                        $.post("/cmd","rightFineTuning",function(data,status){});
+                        break;
+                }
+            });
+
+            $(document).keyup(function(event){
+                switch(event.keyCode){
+                    case 87://w
+                    case 83://s
+                    case 65://a
+                    case 68://d
+                    case 81://q
+                        console.log("key up");
+                        $.post("/cmd","stop",function(data,status){});
+                        break;
+                }
+            });
+
+        });
+
+    </script>
+</head>
+<body>
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-7">
+        <div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">实时画面</h3>
+            </div>
+            <div class="panel-body">
+                <iframe src="http://192.168.0.100:8081/" width="820" height="620"   frameborder="1"  name="name"  scrolling="auto"></iframe>
+            </div>
+        </div>
+    </div>
+		 
+		  
+    <div class="col-xs-6 col-md-4">
+        <div class="panel panel-default">
+			<div class="panel panel-default">
+                <div class="panel-heading">
+					<h3 class="panel-title">信息</h3>
+                </div>
+                <div class="panel-body" >
+                    <iframe id="car-info"  width="320" height="195" src="http://192.168.0.100:8088/info"></iframe>
+                </div>
+			</div>
+			  
+			  
+            <div class="panel-heading">
+				<h3 class="panel-title">控制</h3>
+            </div>
+            <div class="panel-body" style="margin: 30px;margin-left: 40px">
+                <div class="row" >
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"><button id="forward" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span><br/>前进</button></div>
+                    <div class="col-md-2"></div>
+                </div>
+
+				<br/>
+
+                <div class="row">
+                    <div class="col-md-2"><button id="turnLeft" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span><br/>左转</button></div>
+                    <div class="col-md-2"><button id="backward" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span><br/>后退</button></div>
+                    <div class="col-md-2"><button id="turnRight" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span><br/>右转</button></div>
+                </div>
+                   
+                <br/>
+					  
+                <div class="row">
+                    <div class="col-md-2"><button id="speedUp" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon glyphicon-plus-sign" aria-hidden="true"></span><br/>加速</button></div>
+					<div class="col-md-2"></div>
+                    <div class="col-md-2"><button id="slowDown" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon glyphicon-minus-sign" aria-hidden="true"></span><br/>减速</button></div>
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-md-2"><button id="leftFineTuning" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span><br/>左微调</button></div>
+                    <div class="col-md-2"></div>
+					<div class="col-md-2"><button id="rightFineTuning" class="btn btn-large btn-primary" type="button"><span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span><br/>右微调</button></div>
+                </div>
+
+			</div>
+    </div>
+</div>
+
+</body>
+</html>
